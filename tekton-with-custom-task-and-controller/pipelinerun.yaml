@@ -1,0 +1,17 @@
+apiVersion: tekton.dev/v1
+kind: PipelineRun
+metadata:
+  generateName: recipe-time-
+spec:
+  pipelineRef:
+    name: fetch-and-print-recipe
+  workspaces:
+    - name: recipe-store
+      configMap:
+        name: sensitive-recipe-storage
+        items:
+          - key: brownies
+            path: recipe.txt
+    - name: shared-data
+      persistentVolumeClaim:
+        claimName: shared-task-storage

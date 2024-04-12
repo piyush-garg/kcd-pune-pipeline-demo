@@ -1,0 +1,38 @@
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: fetch-secure-data
+spec:
+  workspaces:
+    - name: recipe-store
+    - name: shared-data
+  steps:
+    - name: fetch-and-write
+      image: ubuntu
+      script: |
+        echo "<-----Start copying the recipe----->\n"
+        cp $(workspaces.recipe-store.path)/recipe.txt $(workspaces.shared-data.path)
+        echo "<-----Completed copying the recipe----->"
+---
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: print-data
+spec:
+  workspaces:
+    - name: shared-data
+      readOnly: true
+  params:
+    - name: filename
+  results:
+    - name: status
+      description: status of task
+  steps:
+    - name: print-recipe
+      image: ubuntu
+      script: |
+        echo "<-----Print the recipe----->\n"
+        cat $(workspaces.shared-data.path)/$(params.filename)
+        
+        echo "<\n-----Export the status----->"
+        echo -n "hooray" | tee $(results.status.path)
