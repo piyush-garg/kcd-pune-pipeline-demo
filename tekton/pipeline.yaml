@@ -16,7 +16,6 @@ spec:
     - name: print-the-recipe
       taskRef:
         name: print-data
-      # Note: this is currently required to ensure order of write / read on PVC is correct.
       runAfter:
         - fetch-the-recipe
       params:

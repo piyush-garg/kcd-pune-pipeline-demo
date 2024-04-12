@@ -13,12 +13,24 @@ spec:
       workspaces:
         - name: recipe-store
         - name: shared-data
+    - name: wait
+      taskRef:
+        apiVersion: openshift-pipelines.org/v1alpha1
+        kind: ApprovalTask
+      params:
+        - name: approvers
+          value:
+            - user1
+            - user2
+        - name: numberOfApprovalsRequired
+          value: 1
+      runAfter:
+        - fetch-the-recipe
     - name: print-the-recipe
       taskRef:
         name: print-data
-      # Note: this is currently required to ensure order of write / read on PVC is correct.
       runAfter:
-        - fetch-the-recipe
+        - wait
       params:
         - name: filename
           value: recipe.txt
